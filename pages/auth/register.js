@@ -1,8 +1,6 @@
-import React from 'react'
-import SignUp from '../../components/auth/_signUp'
+import React from "react";
+import SignUp from "../../components/auth/_signUp";
 
-export default function register() {
-  return (
-    <SignUp/>
-  )
+export default function Register() {
+  return <SignUp />;
 }

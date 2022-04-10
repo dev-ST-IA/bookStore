@@ -1,27 +1,30 @@
 import React from "react";
-import Typography from '@mui/material/Typography';
+import Typography from "@mui/material/Typography";
 import Link from "next/link";
+import Copyright from "./_copyright";
+import { Box } from "@mui/system";
+import { Container } from "@mui/material";
 
 export default function Footer(props) {
-  function Copyright(props) {
-    return (
-      <Typography
-        variant="body2"
-        color="text.secondary"
-        align="center"
-        {...props}
+  return (
+    <Box
+      component="footer"
+      sx={{
+        mb: 0,
+        bgcolor: (theme) => theme.palette.grey.A100,
+        padding: "1rem",
+      }}
+    >
+      <Container
+        sx={{
+          bgcolor: (theme) => theme.palette.grey.A100,
+        }}
       >
-        {"Copyright © "}
-        <Link href={"https://mui.com/"}>
-        {/* <Link color="inherit" href="https://mui.com/"> */}
-          <a>
-              Your Website
-              </a>
-        </Link>{" "}
-        {new Date().getFullYear()}
-        {"."}
-      </Typography>
-    );
-  }
-  return <Copyright sx={{ mt: 8, mb: 4 }} />;
+        <Typography variant="body1" textAlign={"center"}>
+          E-Book Pvt (Ltd) Book Store
+        </Typography>
+        <Copyright />
+      </Container>
+    </Box>
+  );
 }
