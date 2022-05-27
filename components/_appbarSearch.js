@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { addSearch } from "../store/searchBarSlice";
 import { useGetAllBooksSearchQuery } from "../services/bookStoreApi";
 import { useRouter } from "next/router";
-import ToasterAlert from "./_alertToaster";
+import { setToaster } from "../store/toasterSlice";
 
 export default function AppBarSearch({ sx }) {
   const [suggestions, setSuggestions] = useState([]);
@@ -69,8 +69,14 @@ export default function AppBarSearch({ sx }) {
     const id = suggestions.filter((i) => i.view === newValue);
     if (id[0]) {
       router.push(`/book/${id[0].id}`);
-    } else {
-      return <ToasterAlert message="Something Went Wrong" severity="error" />;
+    } else if (error) {
+      dispatch(
+        setToaster({
+          message: "Something Went Wrong",
+          severity: "error",
+          navigateTo: null,
+        })
+      );
     }
   };
 

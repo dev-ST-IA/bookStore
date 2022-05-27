@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import BookCard from "./_bookCard";
 import { Box } from "@mui/system";
 import { Pagination } from "@mui/material";
@@ -8,9 +7,12 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import { useSelector, useDispatch } from "react-redux";
 import { addSort, addPage } from "../store/searchSlice";
+import _sorting from "./_sorting";
 
 export default function Books({ data, totalPages }) {
   const search = useSelector((state) => state.search);
+  const queries = useSelector((state) => state.orderQuery);
+  const sortValue = queries.Sort;
   const sort = search.Sort;
   const dispatch = useDispatch();
 
@@ -31,24 +33,20 @@ export default function Books({ data, totalPages }) {
         margin: "auto",
       }}
     >
-      <FormControl sx={{ m: 1, minWidth: 170, alignSelf: "end" }}>
-        <InputLabel id="demo-simple-select-helper-label">Sort By</InputLabel>
-        <Select
-          labelId="demo-simple-select-helper-label"
-          id="demo-simple-select-helper"
-          value={sort}
-          label="Sort By"
-          onChange={handleCategoryChange}
-        >
-          <MenuItem value={"popular"}>Popularity</MenuItem>
-          <MenuItem value={"date_asc"}>Newest</MenuItem>
-          <MenuItem value={"date_desc"}>Oldest</MenuItem>
-          <MenuItem value={"price_asc"}>Price : Low To High</MenuItem>
-          <MenuItem value={"price_desc"}>Price : High To Low</MenuItem>
-          <MenuItem value={"name_asc"}>Book Title - Ascending</MenuItem>
-          <MenuItem value={"name_desc"}>Book Title - Descending</MenuItem>
-        </Select>
-      </FormControl>
+      <_sorting
+        action={addSort}
+        sortables={[
+          "popular",
+          "name_asc",
+          "name_desc",
+          "date_asc",
+          "date_desc",
+          "price_asc",
+          "price_desc",
+        ]}
+        sx={{ alignSelf: "flex-end" }}
+        value={sortValue}
+      />
       <Box
         sx={{
           display: "flex",
@@ -60,7 +58,7 @@ export default function Books({ data, totalPages }) {
           margin: "auto",
         }}
       >
-        {data.map((book) => (
+        {data?.map((book) => (
           <BookCard {...book} />
         ))}
       </Box>
@@ -69,6 +67,7 @@ export default function Books({ data, totalPages }) {
         variant="outlined"
         shape="rounded"
         onChange={handlePage}
+        page={search?.Page || 1}
       />
     </Box>
   );

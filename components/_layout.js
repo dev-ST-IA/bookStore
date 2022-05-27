@@ -6,9 +6,16 @@ import NavBar from "./_navbar";
 import { Box } from "@mui/system";
 import MetaHead from "./_head";
 import AuthProvider from "./auth/_authProvider";
+import { useSelector } from "react-redux";
+import ToasterAlert from "./_alertToaster";
 
 export default function Layout({ children }) {
-  const theme = createTheme();
+  const mode = useSelector((state) => state.themeMode.mode);
+  const theme = createTheme({
+    palette: {
+      mode,
+    },
+  });
   return (
     <AuthProvider>
       <ThemeProvider theme={theme}>
@@ -20,14 +27,13 @@ export default function Layout({ children }) {
             margin: "auto",
             width: 1,
             minHeight: 1,
-            bgcolor: (theme) => theme.palette.grey.A100,
           }}
         >
           <CssBaseline />
+          <ToasterAlert />
           <main>
             <Box
               sx={{
-                backgroundColor: theme.palette.grey.A200,
                 margin: "auto",
                 paddingBottom: "1rem",
                 width: 1,

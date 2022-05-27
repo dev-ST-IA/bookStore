@@ -8,15 +8,20 @@ import { Typography } from "@mui/material";
 import { ButtonBase } from "@mui/material";
 import BookCardButton from "./_bookCardButton";
 import { useRouter } from "next/router";
+import { Box } from "@mui/system";
 
 export default function BookCard({
   sx,
   title,
-  author,
+  authorName,
+  authorId,
   price,
   id,
   publisher,
   units,
+  categoryId,
+  categoryName,
+  imageUrl,
   ...other
 }) {
   const router = useRouter();
@@ -25,7 +30,7 @@ export default function BookCard({
   };
 
   return (
-    <Card sx={{ maxWidth: 250, minWidth: 250, margin: 2, ...sx }}>
+    <Card sx={{ maxWidth: 250, minWidth: 300, margin: 2, ...sx }}>
       <ButtonBase
         sx={{
           display: "flex",
@@ -35,13 +40,25 @@ export default function BookCard({
         }}
         onClick={goToBook}
       >
-        <CardHeader title={title} subheader={author} />
-        <CardMedia
-          component="img"
-          height="194"
-          image="/static/images/cards/paella.jpg"
-          alt="Paella dish"
+        <CardHeader
+          sx={{ minHeight: "7rem", maxHeight: "15rem", overflow: "auto" }}
+          title={title}
+          subheader={authorName}
         />
+        <Box sx={{ height: "30rem", margin: "auto" }}>
+          <CardMedia
+            component="img"
+            image={imageUrl}
+            alt={title}
+            sx={{
+              objectFit: "contain",
+              width: 1,
+              minHeight: "30rem",
+              margin: "auto",
+            }}
+          />
+        </Box>
+
         <CardContent>
           <Typography variant="h5" component="div">
             {price}

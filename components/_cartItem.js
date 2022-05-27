@@ -8,29 +8,59 @@ import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
 import DeleteSharpIcon from "@mui/icons-material/DeleteSharp";
 import { IconButton } from "@mui/material";
 import { Typography } from "@mui/material";
+import { useGetBookQuery } from "../services/bookStoreApi";
+import useAuth from "../hooks/useAuth";
+import {
+  useDeleteProductInCartMutation,
+  useEditProductInCartMutation,
+} from "../services/bookStoreApi";
 
 export default function CartItem({ row, columns }) {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.cart.products);
   const [index, setIndex] = useState(null);
   const item = products?.filter((i) => i.id == row.id)[0];
+  const { data, ...args } = useGetBookQuery(row?.id);
+  const auth = useAuth();
+  const isUserLogged = auth?.isUserLogged;
+  const [deleteCurrentProduct, { ...deleteProductArgs }] =
+    useDeleteProductInCartMutation();
+  const [editProduct, { ...editProductArgs }] = useEditProductInCartMutation();
 
-  const addQuantity = (e, product = row) => {
-    if (product.quantity < product.units) {
-      let obj = { ...product, quantity: product.quantity + 1 };
-      dispatch(update({ index, object: obj }));
+  const addQuantity = async (e, product = row) => {
+    if (Number(product.quantity) < Number(product.units)) {
+      if (isUserLogged) {
+        editProduct({
+          productId: row.id,
+          quantity: Number(row.quantity) + 1,
+        });
+      } else {
+        let obj = { ...product, quantity: product.quantity + 1 };
+        dispatch(update({ index, object: obj }));
+      }
     }
   };
 
   const minusQuantity = (e, product = row) => {
     if (product.quantity > 1) {
-      let obj = { ...product, quantity: product.quantity - 1 };
-      dispatch(update({ index, object: obj }));
+      if (isUserLogged) {
+        editProduct({
+          productId: row.id,
+          quantity: Number(row.quantity) - 1,
+        });
+      } else {
+        let obj = { ...product, quantity: product.quantity - 1 };
+        dispatch(update({ index, object: obj }));
+      }
     }
   };
 
-  const removeItem = () => {
-    dispatch(deleteProduct({ id: row.id }));
+  const removeItem = async () => {
+    if (isUserLogged) {
+      deleteCurrentProduct(row.id);
+    } else {
+      dispatch(deleteProduct({ id: row.id }));
+    }
   };
 
   useEffect(() => {
@@ -40,17 +70,17 @@ export default function CartItem({ row, columns }) {
 
   return (
     <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-      <TableCell key="id">{row.id?.toLocaleString("en-US")}</TableCell>
-      <TableCell key="title">{row.title}</TableCell>
-      <TableCell key="author">{row.author}</TableCell>
+      <TableCell key="id">{row?.id?.toLocaleString("en-US")}</TableCell>
+      <TableCell key="title">{row?.title}</TableCell>
+      <TableCell key="author">{data?.authorName}</TableCell>
       <TableCell key="publisher" align="right">
-        {row.publisher}
+        {row?.publisher}
       </TableCell>
       <TableCell key="price" align="right">
-        {row.price?.toLocaleString("en-US")}
+        {row?.price?.toLocaleString("en-US")}
       </TableCell>
       <TableCell key="units" align="right">
-        {row.units?.toLocaleString("en-US")}
+        {row?.units?.toLocaleString("en-US")}
       </TableCell>
       <TableCell
         key="quantity"

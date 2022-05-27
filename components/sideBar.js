@@ -10,6 +10,7 @@ import { useGetAllCategoriesQuery } from "../services/bookStoreApi";
 import { useSelector, useDispatch } from "react-redux";
 import { addCategory } from "../store/searchSlice";
 import CenteredLoader from "./_centeredLoader";
+import useAuth from "../hooks/useAuth";
 
 export default function SideBar({ children }) {
   const dispatch = useDispatch();
@@ -17,6 +18,8 @@ export default function SideBar({ children }) {
   const categoryId = search.category;
   const { data, isError, isLoading, isSuccess, error } =
     useGetAllCategoriesQuery();
+  const auth = useAuth();
+  const isLogged = auth?.isUserLogged;
 
   const handleCategoryClick = (id) => {
     dispatch(addCategory(id));
@@ -42,6 +45,16 @@ export default function SideBar({ children }) {
           {isSuccess && (
             <nav aria-label="book categories">
               <List>
+                {isLogged && (
+                  <ListItem>
+                    <ListItemButton
+                      selected={categoryId === -2}
+                      onClick={() => handleCategoryClick(-2)}
+                    >
+                      <ListItemText primary={"Favourites"} />
+                    </ListItemButton>
+                  </ListItem>
+                )}
                 <ListItem>
                   <ListItemButton
                     selected={categoryId === -1}
@@ -50,7 +63,7 @@ export default function SideBar({ children }) {
                     <ListItemText primary={"All"} />
                   </ListItemButton>
                 </ListItem>
-                {data.map((category) => (
+                {data?.map((category) => (
                   <ListItem>
                     <ListItemButton
                       selected={categoryId === category.id}

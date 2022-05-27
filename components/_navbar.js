@@ -10,21 +10,20 @@ import { IconButton } from "@mui/material";
 import { Badge } from "@mui/material";
 import UserMenu from "./_userMenu";
 import { useSelector } from "react-redux";
-import { useAuth } from "../hooks/useAuth";
+import useAuth from "../hooks/useAuth";
+import ThemeSwitch from "./_themeSwitch.js";
 
 export default function NavBar() {
   const auth = useAuth();
   const isUserLoggedIn = auth?.isUserLogged;
   const products = useSelector((state) => state.cart.products);
   const noOfProducts = products.length;
-
   return (
     <AppBar
       position="static"
       color="default"
       sx={{
         borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
-        bgcolor: (theme) => theme.palette.grey.A100,
         minWidth: 1,
       }}
     >
@@ -49,6 +48,7 @@ export default function NavBar() {
             </Badge>
           </IconButton>
         </Link>
+        <ThemeSwitch />
         {!isUserLoggedIn && (
           <Button
             href="/auth/login"

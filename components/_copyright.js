@@ -8,7 +8,6 @@ export default function Copyright(props) {
       color="text.secondary"
       align="center"
       {...props}
-      sx={{ bgcolor: (theme) => theme.palette.grey.A100 }}
     >
       {"Copyright © "}
       <Link href={"/"}>

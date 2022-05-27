@@ -3,7 +3,10 @@ import Books from "../components/_books";
 import { Box } from "@mui/system";
 import { Grid } from "@mui/material";
 import SideBar from "../components/sideBar";
-import { useGetAllBooksQuery } from "../services/bookStoreApi";
+import {
+  useGetAllBooksQuery,
+  useGetStarredBooksQuery,
+} from "../services/bookStoreApi";
 import { useSelector } from "react-redux";
 import { CircularProgress } from "@mui/material";
 import Layout from "../components/_layout";
@@ -18,11 +21,35 @@ function Home() {
 
   const { data, isError, isFetching, isLoading, isSuccess, error, refetch } =
     useGetAllBooksQuery({ Size, Sort, Page, category });
-  const books = data?.books["$values"];
-  const totalPages = data?.totalPages;
+  const {
+    data: starredData,
+    refetch: refetchStarred,
+    ...starredArgs
+  } = useGetStarredBooksQuery({
+    Size,
+    Sort,
+    Page,
+  });
+  const books = category != -2 ? data?.books : starredData?.books;
+  const totalPages =
+    category != -2 ? data?.totalPages : starredData?.totalPages;
 
   useEffect(() => {
-    refetch({ Size, Sort, Page, category });
+    if (category === -2) {
+      refetchStarred({ Size, Sort, Page, category });
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
+    } else {
+      refetch({ Size, Sort, Page, category });
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
+    }
   }, [category, Page, Size, Sort]);
 
   return (

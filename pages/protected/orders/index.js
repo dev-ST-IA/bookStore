@@ -1,40 +1,20 @@
 import React from "react";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
-import { useDemoData } from "@mui/x-data-grid-generator";
 import { TextField } from "@mui/material";
 import AuthLayout from "../../../components/auth/_authLayout";
-
-const VISIBLE_FIELDS = ["name", "rating", "country", "dateCreated", "isAdmin"];
+import _ordersTable from "../../../components/orders/_ordersTable";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 
 function Orders() {
-  const { data } = useDemoData({
-    dataSet: "Employee",
-    visibleFields: VISIBLE_FIELDS,
-    rowLength: 100,
-  });
-
   return (
-    <React.Fragment>
-      <Box sx={{ margin: "1rem auto", width: "90%" }}>
-        <TextField
-          id="standard-basic"
-          label="Search For Orders"
-          variant="standard"
-          fullWidth
-        />
-      </Box>
-      <Box
-        sx={{
-          height: 500,
-          maxHeight: 500,
-          margin: "1rem auto",
-          width: "90%",
-        }}
-      >
-        <DataGrid {...data} components={{ Toolbar: GridToolbar }} />
-      </Box>
-    </React.Fragment>
+    <Grid container spacing={3}>
+      <Grid item xs={12}>
+        <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+          <_ordersTable />
+        </Paper>
+      </Grid>
+    </Grid>
   );
 }
 

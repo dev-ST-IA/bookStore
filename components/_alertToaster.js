@@ -4,16 +4,12 @@ import { Alert } from "@mui/material";
 import { Snackbar } from "@mui/material";
 import { useRouter } from "next/router";
 
-export default function ToasterAlert({
-  message = "Something Went Wrong",
-  severity = "error",
-  navigateTo = null,
-  isOpen = false,
-  duration = 3000,
-}) {
+export default function ToasterAlert() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const open = useSelector((state) => state.toaster.open);
+  const { message, severity, navigateTo, open, duration } = useSelector(
+    (state) => state.toaster
+  );
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -21,9 +17,10 @@ export default function ToasterAlert({
     }
     dispatch(setOpen(false));
     if (navigateTo) {
-      router.push(navigateTo);
+      router.replace(navigateTo);
     }
   };
+
   return (
     <Snackbar open={open} autoHideDuration={duration} onClose={handleClose}>
       <Alert onClose={handleClose} severity={severity} sx={{ width: "100%" }}>

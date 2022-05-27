@@ -11,15 +11,10 @@ export default function Footer(props) {
       component="footer"
       sx={{
         mb: 0,
-        bgcolor: (theme) => theme.palette.grey.A100,
         padding: "1rem",
       }}
     >
-      <Container
-        sx={{
-          bgcolor: (theme) => theme.palette.grey.A100,
-        }}
-      >
+      <Container sx={{}}>
         <Typography variant="body1" textAlign={"center"}>
           E-Book Pvt (Ltd) Book Store
         </Typography>

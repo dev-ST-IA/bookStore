@@ -14,19 +14,22 @@ import { useLoginMutation } from "../../services/bookStoreApi";
 import { useFormik } from "formik";
 import { loginSchema } from "../../schemas/loginSchema";
 import { Switch } from "@mui/material";
-import ToasterAlert from "../_alertToaster";
 import { useSelector, useDispatch } from "react-redux";
 import { setOpen } from "../../store/toasterSlice";
 import { setToken, setUserDetails } from "../../store/authSlice";
+import useAuth from "../../hooks/useAuth";
+import { setToaster } from "../../store/toasterSlice";
 
 export default function SignIn() {
-  const [toaster, setToaster] = useState({ message: "", severity: "" });
   const isOpen = useSelector((state) => state.toaster.open);
   const [checked, setChecked] = useState(true);
   const [login, { data, isError, isSuccess, isLoading, error }] =
     useLoginMutation();
   const router = useRouter();
+  const redirectQuery = router.query?.redirect;
   const dispatch = useDispatch();
+  const auth = useAuth();
+  const isUserLogged = auth?.isUserLogged;
 
   const formik = useFormik({
     initialValues: {
@@ -48,21 +51,39 @@ export default function SignIn() {
       const res = await login(formik.values).unwrap();
       dispatch(setToken(res.token));
       dispatch(setUserDetails(res));
-      setToaster({
-        message: `Login Success`,
-        severity: "success",
-      });
+      dispatch(
+        setToaster({
+          message: `Login Success`,
+          severity: "success",
+          navigateTo: null,
+        })
+      );
       dispatch(setOpen(true));
-      router.push("/");
+      console.log(redirectQuery);
+      if (redirectQuery) {
+        router.push(`${redirectQuery}`);
+      } else {
+        router.push("/");
+      }
     } catch (err) {
-      setToaster({
-        message: `Login Failed \n Error: ${err?.data?.title}`,
-        severity: "error",
-      });
+      dispatch(
+        setToaster({
+          message: `Login Failed \n Error: ${err?.data?.title}`,
+          severity: "error",
+          navigateTo: null,
+        })
+      );
       dispatch(setOpen(true));
     }
   };
 
+  // if (isUserLogged&&) {
+  //   router.back();
+  //   dispatch(setOpen(true));
+  //   return (
+  //     <ToasterAlert isOpen={open} severity="warning" message="Your Logged In" />
+  //   );
+  // }
   return (
     <Box
       sx={{
@@ -163,7 +184,14 @@ export default function SignIn() {
             </Link>
           </Grid>
           <Grid item>
-            <Link href="/auth/register" variant="body2">
+            <Link
+              href={
+                redirectQuery
+                  ? `/auth/register?redirect=${redirectQuery}`
+                  : "/auth/register"
+              }
+              variant="body2"
+            >
               {"Don't have an account? Sign Up"}
             </Link>
           </Grid>
@@ -174,7 +202,6 @@ export default function SignIn() {
           </Grid>
         </Grid>
       </Box>
-      <ToasterAlert {...toaster} isOpen={isOpen} />
     </Box>
   );
 }
